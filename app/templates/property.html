@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+<div class="prop-card">
+
+    <div>
+        <img class="single-pics" src="{{ url_for('static', filename="uploads/" + property.photo_name) }}" />
+    </div>
+    <div class="single-card-body">
+        <h2>{{ property.title }}</h2>
+        <div class="attributes">
+            <span class="pricelabel">${{ property.price }}</span> <span class="propertytype">{{ property.property_type }}</span>
+        </div>
+        <p>{{ property.description }}</p>
+        <div class="imp-info">
+            <span class="Bedrooms"><img class="icon" src="{{url_for('static', filename='bed.png')}}" />{{ property.rooms }} Bedrooms</p>  
+            <span class="Bathrooms"><img class="icon" src="{{url_for('static', filename='bath.png')}}" />{{ property.bathrooms }} Bathrooms</p>
+        </div>
+        <span class="Location"><img class="icon" src="{{url_for('static', filename='location.png')}}" />{{ property.location }}</p>
+
+        <button type="submit" class="btn email">Email Realtor</button>
+    </div>
+
+</div>
+
+{% endblock %}

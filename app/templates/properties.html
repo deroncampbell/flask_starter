@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block main %}
+
+{% include 'flash_messages.html' %}
+
+    <h1 class="header">Properties</h1>
+    <div class="grid-container">
+        {% for p in properties %}
+        <div class="trip-card">
+            <div>
+                <img class='images-main' src="{{ url_for('static', filename="uploads/" + p.photo_name) }}" />
+            </div>
+            <div class="one-card">
+                <h5 class="title">{{ p.title }} </h5>
+                <span class="location-card"><img class="icon" src="{{url_for('static', filename='location.png')}}" />{{ p.location }}</p>
+                <span class="pricelabel">${{ p.price }}</span>
+            </div>
+            <form action="{{ url_for('singleproperty', propertyid=p.id) }}" method="post">
+                <button type="submit" class="btn propertybutton">View Property</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

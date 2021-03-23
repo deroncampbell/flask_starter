@@ -5,8 +5,15 @@ Werkzeug Documentation:  http://werkzeug.pocoo.org/documentation/
 This file creates your application.
 """
 
+import os
 from app import app
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, send_from_directory, abort, session, flash
+from werkzeug.utils import secure_filename
+from flask import send_from_directory
+from app import db
+from app.models import Property
+
+from .forms import myForm
 
 
 ###
@@ -23,6 +30,47 @@ def home():
 def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
+
+@app.route('/property/', methods=['POST', 'GET'])
+def property():
+
+    form = myForm()
+    if request.method == 'POST' and form.validate_on_submit():
+
+        title = request.form['title']
+        description = request.form['description']
+        rooms = request.form['rooms']
+        bathrooms = request.form['brooms']
+        price = request.form['price']
+        property_type = dict(form.property_type.choices).get(form.property_type.data)
+        location = request.form['location']
+        photo = form.photo.data
+        filename = secure_filename(photo.filename)
+        photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+        prop = Property(title=title, description=description, rooms=rooms, bathrooms=bathrooms, price=price, property_type=property_type, location=location, photo_name=filename)
+
+        db.session.add(prop)
+        db.session.commit()
+            
+        flash('Property successfully added.', 'success')
+        return redirect(url_for('property'))
+    flash_errors(form)
+    return render_template('form.html', form=form)
+
+@app.route('/properties/')
+def properties():
+   
+    properties = Property.query.all()
+
+    return render_template('properties.html', properties=properties)
+
+@app.route("/property/<propertyid>", methods=['POST', 'GET'])
+def singleproperty(propertyid):
+     
+    propertycorrect = Property.query.get(propertyid)
+
+    return render_template('property.html', property=propertycorrect)
 
 
 ###
